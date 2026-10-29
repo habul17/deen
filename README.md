@@ -35,7 +35,7 @@ Google sign-in, email and push are all optional in development:
 
 ## Deploying (Vercel + Neon)
 
-1. **Database.** Create a Neon project and copy the pooled connection string into `DATABASE_URL`.
+1. **Database.** Create a Neon project. Copy the pooled connection string into `DATABASE_URL` and the direct one (pooling off) into `DIRECT_URL`, which migrations use.
 2. **Vercel.** Import the repository and add every variable from `.env.example`. Set `BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` to the production URL. The `vercel-build` script generates the Prisma client, applies migrations, and builds.
 3. **Google OAuth.** In Google Cloud Console, create an OAuth client ID of type *Web application* and add `https://<your-domain>/api/auth/callback/google` as an authorised redirect URI.
 4. **Email.** Verify a domain in [Resend](https://resend.com), then set `RESEND_API_KEY` and `EMAIL_FROM`.
