@@ -54,19 +54,19 @@ export function LocationPicker({ onPick, autoFocus }: { onPick: (p: Place) => vo
         type="button"
         onClick={gps}
         disabled={locating}
-        className="press flex w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-left transition-colors hover:border-line-strong disabled:opacity-70"
+        className="press flex w-full items-center gap-3 rounded-2xl bg-fill px-4 py-3.5 text-left transition-colors hover:bg-fill-strong disabled:opacity-70"
       >
-        <span className="grid size-9 place-items-center rounded-full bg-accent-soft text-accent">
+        <span className="grid size-9 place-items-center rounded-full bg-ink text-btn-ink">
           {locating ? <LoaderCircle className="size-4 animate-spin" /> : <LocateFixed className="size-4" strokeWidth={1.75} />}
         </span>
         <span>
-          <span className="block text-[15px] font-medium">Use my current location</span>
-          <span className="block text-[13px] text-muted">Most accurate prayer times</span>
+          <span className="block text-[0.9375rem] font-semibold">Use my current location</span>
+          <span className="block text-[0.8125rem] text-ink-soft">Most accurate prayer times</span>
         </span>
       </button>
 
       <div className="relative mt-3">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-faint" strokeWidth={1.75} />
+        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-faint" strokeWidth={1.75} />
         <input
           type="search"
           value={query}
@@ -75,12 +75,12 @@ export function LocationPicker({ onPick, autoFocus }: { onPick: (p: Place) => vo
           aria-label="Search for a city"
           autoFocus={autoFocus}
           autoComplete="off"
-          className="h-12 w-full rounded-2xl border border-line bg-surface pr-10 pl-11 text-[15px] outline-none placeholder:text-faint focus:border-accent focus:ring-4 focus:ring-accent-soft"
+          className="h-12 w-full rounded-2xl bg-fill pr-10 pl-11 text-[0.9375rem] outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-ink"
         />
-        {searching && <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-faint" />}
+        {searching && <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-ink-faint" />}
       </div>
 
-      {error && <p className="mt-3 px-1 text-[13px] text-missed">{error}</p>}
+      {error && <p className="mt-3 text-[0.8125rem] text-danger">{error}</p>}
 
       <AnimatePresence initial={false}>
         {shown.length > 0 && (
@@ -88,16 +88,16 @@ export function LocationPicker({ onPick, autoFocus }: { onPick: (p: Place) => vo
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mt-2 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface"
+            className="mt-2 divide-y divide-line border-b border-line"
           >
             {shown.map((r) => (
               <li key={`${r.latitude},${r.longitude}`}>
                 <button
                   type="button"
                   onClick={() => onPick(r)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-[15px] transition-colors hover:bg-surface-2"
+                  className="flex w-full items-center gap-3 py-3 text-left text-[0.9375rem]"
                 >
-                  <MapPin className="size-4 shrink-0 text-faint" strokeWidth={1.75} />
+                  <MapPin className="size-4 shrink-0 text-ink-faint" strokeWidth={1.75} />
                   <span className="truncate">{r.name}</span>
                 </button>
               </li>
@@ -106,7 +106,7 @@ export function LocationPicker({ onPick, autoFocus }: { onPick: (p: Place) => vo
         )}
       </AnimatePresence>
       {query.trim().length >= 2 && !searching && results.length === 0 && !error && (
-        <p className="mt-3 px-1 text-[13px] text-muted">No places found for “{query.trim()}”.</p>
+        <p className="mt-3 text-[0.8125rem] text-ink-soft">No places found for “{query.trim()}”.</p>
       )}
     </div>
   );

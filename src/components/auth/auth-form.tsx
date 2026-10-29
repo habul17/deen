@@ -45,8 +45,8 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
 
   return (
     <div>
-      <h1 className="font-serif text-[40px] leading-none tracking-tight">{signUp ? "Begin" : "Welcome back"}</h1>
-      <p className="mt-3 text-[15px] text-muted">
+      <h1 className="display text-[2.75rem] leading-[0.95] font-semibold">{signUp ? "Begin" : "Welcome back"}</h1>
+      <p className="mt-3 text-[1rem] text-ink-soft">
         {signUp ? "Create your private space to keep track of your prayers." : "Sign in to continue where you left off."}
       </p>
 
@@ -56,7 +56,7 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
             {pending === "google" ? <LoaderCircle className="size-4 animate-spin" /> : <GoogleIcon />}
             Continue with Google
           </Button>
-          <div className="my-6 flex items-center gap-4 text-[12px] tracking-[0.08em] text-faint uppercase">
+          <div className="my-6 flex items-center gap-4 text-[0.8125rem] text-ink-soft">
             <span className="h-px flex-1 bg-line" />
             or
             <span className="h-px flex-1 bg-line" />
@@ -79,7 +79,7 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
           <div className="flex items-baseline justify-between">
             <Label htmlFor="password">Password</Label>
             {!signUp && (
-              <Link href="/forgot-password" className="text-[13px] text-muted hover:text-ink">
+              <Link href="/forgot-password" className="text-[0.8125rem] text-ink-soft hover:text-ink">
                 Forgot?
               </Link>
             )}
@@ -98,7 +98,7 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-lg text-muted hover:text-ink"
+              className="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-ink-soft hover:text-ink"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff className="size-4" strokeWidth={1.75} /> : <Eye className="size-4" strokeWidth={1.75} />}
@@ -107,7 +107,7 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
         </div>
 
         {error && (
-          <p role="alert" className="rounded-xl bg-missed-soft px-4 py-3 text-[14px] text-missed">
+          <p role="alert" className="text-[0.875rem] font-medium text-danger">
             {error}
           </p>
         )}
@@ -118,9 +118,9 @@ export function AuthForm({ mode, googleEnabled }: { mode: Mode; googleEnabled: b
         </Button>
       </form>
 
-      <p className="mt-8 text-center text-[14px] text-muted">
+      <p className="mt-8 text-center text-[0.875rem] text-ink-soft">
         {signUp ? "Already have an account? " : "New to Deen? "}
-        <Link href={signUp ? "/sign-in" : "/sign-up"} className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink">
+        <Link href={signUp ? "/sign-in" : "/sign-up"} className="font-semibold text-ink underline underline-offset-4">
           {signUp ? "Sign in" : "Create an account"}
         </Link>
       </p>

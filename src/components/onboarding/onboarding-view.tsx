@@ -52,7 +52,7 @@ export function OnboardingView() {
   if (!ready) {
     return (
       <div className="grid min-h-dvh place-items-center">
-        <LoaderCircle className="size-5 animate-spin text-faint" />
+        <LoaderCircle className="size-5 animate-spin text-ink-soft" />
       </div>
     );
   }
@@ -60,10 +60,10 @@ export function OnboardingView() {
   const index = STEPS.indexOf(step);
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[460px] flex-col px-5 pt-[max(env(safe-area-inset-top),20px)] pb-[max(env(safe-area-inset-bottom),24px)]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[440px] flex-col px-6 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]">
       <div className="flex h-12 items-center justify-between">
         {index > 0 ? (
-          <button onClick={() => go(STEPS[index - 1])} aria-label="Back" className="press -ml-2 grid size-10 place-items-center rounded-full text-ink-2 hover:bg-surface-2">
+          <button onClick={() => go(STEPS[index - 1])} aria-label="Back" className="press -ml-2 grid size-10 place-items-center rounded-full hover:bg-fill">
             <ArrowLeft className="size-5" strokeWidth={1.75} />
           </button>
         ) : (
@@ -71,7 +71,7 @@ export function OnboardingView() {
         )}
         <div className="flex gap-1.5" aria-label={`Step ${index + 1} of ${STEPS.length}`}>
           {STEPS.map((s, i) => (
-            <span key={s} className={cn("h-1 rounded-full transition-all duration-500", i <= index ? "w-6 bg-accent" : "w-3 bg-line-strong")} />
+            <span key={s} className={cn("h-1 rounded-full transition-all duration-500", i <= index ? "w-6 bg-ink" : "w-3 bg-fill-strong")} />
           ))}
         </div>
       </div>
@@ -118,9 +118,9 @@ export function OnboardingView() {
 function Title({ eyebrow, children, sub }: { eyebrow?: string; children: React.ReactNode; sub?: React.ReactNode }) {
   return (
     <div className="mb-8">
-      {eyebrow && <div className="mb-2 text-[12px] font-medium tracking-[0.12em] text-accent uppercase">{eyebrow}</div>}
-      <h1 className="font-serif text-[40px] leading-[1.05] tracking-tight">{children}</h1>
-      {sub && <p className="mt-3 text-[15px] leading-relaxed text-muted">{sub}</p>}
+      {eyebrow && <div className="mb-3 text-[0.8125rem] text-ink-soft">{eyebrow}</div>}
+      <h1 className="display text-[2.75rem] leading-[0.98] font-semibold">{children}</h1>
+      {sub && <p className="mt-3 text-[1rem] leading-relaxed text-ink-soft">{sub}</p>}
     </div>
   );
 }
@@ -130,22 +130,19 @@ function Welcome({ name, onNext }: { name: string; onNext: () => void }) {
   return (
     <>
       <div className="flex-1">
-        <p lang="ar" dir="rtl" className="font-arabic text-[28px] leading-relaxed text-accent">
+        <p lang="ar" dir="rtl" className="mb-2 font-arabic text-[1.75rem] leading-relaxed text-ink-soft">
           السَّلَامُ عَلَيْكُمْ
         </p>
-        <Title sub="Deen is a quiet place to keep your five daily prayers — and the night prayer — with intention. It takes a minute to set up.">
+        <Title sub="Deen is a quiet place to keep your five daily prayers, and the night prayer, with intention. It takes a minute to set up.">
           Welcome{first ? `, ${first}` : ""}.
         </Title>
-        <ul className="space-y-4 text-[15px] text-ink-2">
+        <ul className="divide-y divide-line border-y border-line text-[0.9375rem]">
           {[
             "Accurate times for where you are, adjustable to your mosque",
             "One tap to mark a prayer; hold for the details",
-            "Private by design — only you see your history",
+            "Private by design: only you see your history",
           ].map((t) => (
-            <li key={t} className="flex gap-3">
-              <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
-                <Check className="size-3" strokeWidth={2.5} />
-              </span>
+            <li key={t} className="py-3.5">
               {t}
             </li>
           ))}
@@ -166,7 +163,7 @@ function LocationStep({ current, onPick, onKeep }: { current: string | null; onP
       </Title>
       <LocationPicker onPick={onPick} />
       {onKeep && current && (
-        <button onClick={onKeep} className="press mt-4 flex items-center gap-2 self-start rounded-full px-1 text-[14px] text-muted hover:text-ink">
+        <button onClick={onKeep} className="press mt-4 flex items-center gap-2 self-start rounded-full px-1 text-[0.875rem] text-ink-soft hover:text-ink">
           <MapPin className="size-4" strokeWidth={1.75} />
           Keep {current}
         </button>
@@ -188,11 +185,11 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
       </Title>
 
       {times && (
-        <ul className="mb-6 grid grid-cols-5 gap-1 rounded-2xl border border-line bg-surface p-3 text-center" style={{ boxShadow: "var(--shadow-card)" }}>
+        <ul className="mb-7 grid grid-cols-5 gap-1 border-y border-line py-3.5 text-center">
           {FARD.map((p) => (
             <li key={p}>
-              <div className="text-[12px] text-muted">{PRAYER_META[p].name}</div>
-              <motion.div key={times[p].start.getTime()} initial={{ opacity: 0.3 }} animate={{ opacity: 1 }} className="tnum mt-1 text-[14px] font-medium">
+              <div className="text-[0.75rem] text-ink-soft">{PRAYER_META[p].name}</div>
+              <motion.div key={times[p].start.getTime()} initial={{ opacity: 0.3 }} animate={{ opacity: 1 }} className="tnum mt-1 text-[0.9375rem] font-semibold">
                 {formatTime(times[p].start, tz, settings.timeFormat).replace(/\s?[AP]M$/i, "")}
               </motion.div>
             </li>
@@ -202,14 +199,14 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
 
       <div className="space-y-5">
         <div>
-          <div className="mb-2 px-1 text-[12px] font-medium tracking-[0.08em] text-muted uppercase">Method</div>
+          <div className="mb-2 text-[0.8125rem] text-ink-soft">Method</div>
           <button
             onClick={() => setShowMethods((v) => !v)}
             aria-expanded={showMethods}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-left text-[15px]"
+            className="flex w-full items-center justify-between gap-3 rounded-2xl bg-fill px-4 py-3.5 text-left text-[0.9375rem]"
           >
             <span className="truncate">{method?.label ?? settings.method}</span>
-            <ChevronDown className={cn("size-4 shrink-0 text-faint transition-transform", showMethods && "rotate-180")} strokeWidth={1.75} />
+            <ChevronDown className={cn("size-4 shrink-0 text-ink-soft transition-transform", showMethods && "rotate-180")} strokeWidth={1.75} />
           </button>
           <AnimatePresence initial={false}>
             {showMethods && (
@@ -217,7 +214,7 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="mt-2 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface"
+                className="mt-2 divide-y divide-line overflow-hidden border-y border-line"
               >
                 {METHODS.map((m) => (
                   <li key={m.id}>
@@ -226,10 +223,10 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
                         onChange({ method: m.id });
                         setShowMethods(false);
                       }}
-                      className="flex w-full items-center justify-between px-4 py-3 text-left text-[14px] hover:bg-surface-2"
+                      className="flex w-full items-center justify-between py-3 text-left text-[0.875rem]"
                     >
                       {m.label}
-                      {m.id === settings.method && <Check className="size-4 text-accent" strokeWidth={2.25} />}
+                      {m.id === settings.method && <Check className="size-4" strokeWidth={2.25} />}
                     </button>
                   </li>
                 ))}
@@ -239,7 +236,7 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
         </div>
 
         <div>
-          <div className="mb-2 px-1 text-[12px] font-medium tracking-[0.08em] text-muted uppercase">Asr</div>
+          <div className="mb-2 text-[0.8125rem] text-ink-soft">Asr</div>
           <Segmented
             label="Asr calculation"
             value={settings.madhab}
@@ -251,17 +248,17 @@ function TimesStep({ settings, onChange, onNext }: { settings: SettingsData; onC
           />
         </div>
 
-        <div className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-surface px-4 py-3.5">
+        <div className="flex items-center justify-between gap-4 border-y border-line py-3.5">
           <div>
-            <div className="text-[15px]">Track Tahajjud</div>
-            <div className="text-[13px] text-muted">Optional night prayer, with its own stats</div>
+            <div className="text-[0.9375rem]">Track Tahajjud</div>
+            <div className="text-[0.8125rem] text-ink-soft">Optional night prayer, with its own stats</div>
           </div>
           <Switch label="Track Tahajjud" checked={settings.tahajjudEnabled} onChange={(tahajjudEnabled) => onChange({ tahajjudEnabled })} />
         </div>
       </div>
 
       <div className="flex-1" />
-      <p className="mt-6 text-center text-[13px] text-muted">You can fine-tune any single prayer later in Settings.</p>
+      <p className="mt-6 text-center text-[0.8125rem] text-ink-soft">You can fine-tune any single prayer later in Settings.</p>
       <Button size="lg" className="mt-4 w-full" onClick={onNext}>
         Continue
       </Button>
@@ -279,7 +276,7 @@ function RemindersStep({ onDone }: { onDone: (extra?: Partial<SettingsData>) => 
     const r = await enablePush();
     setBusy(false);
     if (r === "granted") return onDone();
-    setFailed(r === "denied" ? "Notifications were declined — you can turn them on later in Settings." : "Couldn't turn on notifications right now.");
+    setFailed(r === "denied" ? "Notifications were declined. You can turn them on later in Settings." : "Couldn't turn on notifications right now.");
   };
 
   return (
@@ -288,27 +285,27 @@ function RemindersStep({ onDone }: { onDone: (extra?: Partial<SettingsData>) => 
         Never miss a prayer
       </Title>
 
-      <div className="relative mx-auto mb-8 w-full max-w-[320px] rounded-[22px] border border-line bg-surface p-4" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div className="surface relative mx-auto mb-8 w-full max-w-[320px] rounded-[22px] p-4 shadow-[0_18px_40px_-18px_rgb(0_0_0/0.45)]">
         <div className="flex items-start gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent text-accent-ink">
+          <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-ink text-btn-ink">
             <Bell className="size-4" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[14px] font-medium">Asr</span>
-              <span className="text-[12px] text-faint">now</span>
+              <span className="text-[0.875rem] font-semibold">Asr</span>
+              <span className="text-[0.75rem] text-ink-soft">now</span>
             </div>
-            <p className="text-[13px] leading-snug text-muted">It&apos;s time for Asr. Tap to mark it once you&apos;ve prayed.</p>
+            <p className="text-[0.8125rem] leading-snug text-ink-soft">It&apos;s time for Asr. Tap to mark it once you&apos;ve prayed.</p>
           </div>
         </div>
       </div>
 
       {support === "needs-install" && (
-        <p className="mb-4 rounded-2xl bg-surface-2 px-4 py-3 text-[14px] text-ink-2">
+        <p className="mb-4 border-y border-line py-3 text-[0.875rem] text-ink-soft">
           On iPhone, add Deen to your Home Screen first (Share → Add to Home Screen), then turn reminders on in Settings.
         </p>
       )}
-      {failed && <p className="mb-4 rounded-2xl bg-surface-2 px-4 py-3 text-[14px] text-ink-2">{failed}</p>}
+      {failed && <p className="mb-4 border-y border-line py-3 text-[0.875rem] text-ink-soft">{failed}</p>}
 
       <div className="flex-1" />
       {support === "supported" && !failed && (

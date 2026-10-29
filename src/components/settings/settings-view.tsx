@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTheme } from "next-themes";
 import { BellOff, Check, ChevronRight, Download, LoaderCircle, LogOut, MapPin, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { authClient } from "@/lib/auth-client";
@@ -11,6 +10,7 @@ import { computeDay, type Adjustment } from "@/lib/prayer/times";
 import type { Place } from "@/lib/location";
 import { currentSubscription, disablePush, enablePush, pushSupport, type PushSupport } from "@/lib/push-client";
 import { useApp } from "@/store/app-store";
+import { usePrefs } from "@/store/prefs-store";
 import { useToast } from "@/store/toast-store";
 import { useNow } from "@/hooks/use-now";
 import { useDayTimes, useTimeZone, useTodayKey } from "@/hooks/use-prayer-day";
@@ -40,19 +40,17 @@ export function SettingsView() {
   const close = () => setSheet(null);
 
   return (
-    <div className="pt-4 md:pt-0">
-      <header className="mb-6">
-        <h1 className="font-serif text-[34px] leading-none tracking-tight md:text-[44px]">Settings</h1>
-      </header>
+    <div className="pt-6">
+      <h1 className="display text-[2.75rem] leading-[0.95] font-semibold">Settings</h1>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <div className="space-y-8">
+      <div className="mt-8 space-y-9">
+        <div className="space-y-9">
           {user && (
-            <div className="flex items-center gap-4 rounded-[22px] border border-line bg-surface px-4 py-4" style={{ boxShadow: "var(--shadow-card)" }}>
+            <div className="flex items-center gap-4">
               <Avatar name={user.name} image={user.image} size={48} />
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[17px] font-medium">{user.name}</div>
-                <div className="truncate text-[14px] text-muted">{user.email}</div>
+                <div className="truncate text-[1.0625rem] font-semibold">{user.name}</div>
+                <div className="truncate text-[0.875rem] text-ink-soft">{user.email}</div>
               </div>
               <SyncStatus />
             </div>
@@ -62,7 +60,7 @@ export function SettingsView() {
             <ButtonRow
               label={s.locationName ?? "Not set"}
               hint={s.latitude != null ? `${s.latitude.toFixed(3)}, ${s.longitude?.toFixed(3)} · ${s.timezone}` : "Needed for prayer times"}
-              icon={<MapPin className="size-4 text-muted" strokeWidth={1.75} />}
+              icon={<MapPin className="size-4 text-ink-soft" strokeWidth={1.75} />}
               onClick={() => setSheet("location")}
             />
           </Group>
@@ -99,22 +97,22 @@ export function SettingsView() {
           </Group>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-9">
           <NotificationsGroup />
           <AppearanceGroup />
 
           <Group title="Your data" footer="Everything you log is private to your account. Export it any time.">
-            <ButtonRow label="Export as CSV" hint="One row per prayer, for spreadsheets" icon={<Download className="size-4 text-muted" strokeWidth={1.75} />} onClick={exportCsv} />
-            <ButtonRow label="Export as JSON" hint="Complete backup, including settings" icon={<Download className="size-4 text-muted" strokeWidth={1.75} />} onClick={exportJson} />
+            <ButtonRow label="Export as CSV" hint="One row per prayer, for spreadsheets" icon={<Download className="size-4 text-ink-soft" strokeWidth={1.75} />} onClick={exportCsv} />
+            <ButtonRow label="Export as JSON" hint="Complete backup, including settings" icon={<Download className="size-4 text-ink-soft" strokeWidth={1.75} />} onClick={exportJson} />
           </Group>
 
           <Group title="Account">
             <SignOutRow />
-            <ButtonRow label={<span className="text-missed">Delete account</span>} icon={<Trash2 className="size-4 text-missed" strokeWidth={1.75} />} onClick={() => setSheet("delete")} />
+            <ButtonRow label={<span className="text-danger">Delete account</span>} icon={<Trash2 className="size-4 text-danger" strokeWidth={1.75} />} onClick={() => setSheet("delete")} />
           </Group>
 
-          <p className="px-1 text-center text-[12px] leading-relaxed text-faint lg:text-left">
-            <span lang="ar" dir="rtl" className="font-arabic text-[15px]">
+          <p className="pb-4 text-center text-[0.75rem] leading-relaxed text-ink-soft">
+            <span lang="ar" dir="rtl" className="font-arabic text-[0.9375rem]">
               إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا
             </span>
             <br />
@@ -173,14 +171,14 @@ function ButtonRow({
   onClick: () => void;
 }) {
   return (
-    <button type="button" onClick={onClick} className="flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2/60">
+    <button type="button" onClick={onClick} className="flex min-h-[54px] w-full items-center gap-3 py-3 text-left">
       {icon}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[15px]">{label}</span>
-        {hint && <span className="mt-0.5 block truncate text-[13px] text-muted">{hint}</span>}
+        <span className="block truncate text-[0.9375rem]">{label}</span>
+        {hint && <span className="mt-0.5 block truncate text-[0.8125rem] text-ink-soft">{hint}</span>}
       </span>
-      {value && <span className="max-w-[55%] truncate text-right text-[14px] text-muted">{value}</span>}
-      <ChevronRight className="size-4 shrink-0 text-faint" strokeWidth={1.75} />
+      {value && <span className="max-w-[55%] truncate text-right text-[0.875rem] text-ink-soft">{value}</span>}
+      <ChevronRight className="size-4 shrink-0 text-ink-faint" strokeWidth={1.75} />
     </button>
   );
 }
@@ -190,8 +188,8 @@ function SyncStatus() {
   const state = useApp((s) => s.syncState);
   const label = state === "offline" ? "Offline" : pending > 0 || state === "syncing" ? "Syncing" : "Synced";
   return (
-    <span className="flex shrink-0 items-center gap-1.5 text-[12px] text-muted" aria-live="polite">
-      <span className={cn("size-1.5 rounded-full", label === "Synced" ? "bg-accent" : label === "Offline" ? "bg-late" : "animate-pulse bg-muted")} />
+    <span className="flex shrink-0 items-center gap-1.5 text-[0.75rem] text-ink-soft" aria-live="polite">
+      <span className={cn("size-1.5 rounded-full", label === "Synced" ? "bg-ink" : label === "Offline" ? "ring-1 ring-ink-soft" : "animate-pulse bg-ink-soft")} />
       {label}
     </span>
   );
@@ -219,8 +217,8 @@ function PrayerTimesGroup({ onEdit }: { onEdit: (p: PrayerKey | "SUNRISE") => vo
             label={p === "SUNRISE" ? "Sunrise" : PRAYER_META[p].name}
             value={
               <span className="inline-flex items-center gap-2">
-                {tag && <span className="rounded-md bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium text-accent">{tag}</span>}
-                <span className="tnum text-ink-2">{formatTime(at, tz, s.timeFormat)}</span>
+                {tag && <span className="rounded-full bg-fill-strong px-2 py-0.5 text-[0.6875rem] font-semibold text-ink">{tag}</span>}
+                <span className="tnum text-ink">{formatTime(at, tz, s.timeFormat)}</span>
               </span>
             }
             onClick={() => onEdit(p)}
@@ -289,9 +287,9 @@ function AdjustBody({ target, onClose }: { target: PrayerKey | "SUNRISE"; onClos
       )}
 
       {mode === "offset" ? (
-        <div className="rounded-2xl border border-line">
+        <div className="border-y border-line">
           <Row label="Calculated" hint={target === "TAHAJJUD" ? "Start of the last third of the night" : undefined}>
-            <span className="tnum text-[15px] text-muted">{base ? formatTime(base, tz, s.timeFormat) : "—"}</span>
+            <span className="tnum text-[0.9375rem] text-ink-soft">{base ? formatTime(base, tz, s.timeFormat) : "—"}</span>
           </Row>
           <div className="border-t border-line">
             <Row label="Adjust by">
@@ -307,17 +305,17 @@ function AdjustBody({ target, onClose }: { target: PrayerKey | "SUNRISE"; onClos
           </div>
           <div className="border-t border-line">
             <Row label="New time">
-              <span className="tnum text-[17px] font-medium">{preview ? formatTime(preview, tz, s.timeFormat) : "—"}</span>
+              <span className="tnum text-[1.0625rem] font-semibold">{preview ? formatTime(preview, tz, s.timeFormat) : "—"}</span>
             </Row>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-line p-4">
-          <label htmlFor="fixed-time" className="text-[14px] font-medium">
+        <div>
+          <label htmlFor="fixed-time" className="text-[0.875rem] font-semibold">
             Every day at
           </label>
-          <Input id="fixed-time" type="time" value={fixed} onChange={(e) => setFixed(e.target.value)} className="tnum mt-2 text-[17px]" />
-          <p className="mt-2 text-[13px] text-muted">Useful when your mosque keeps a set jamāʿah time. The window still ends at the next prayer.</p>
+          <Input id="fixed-time" type="time" value={fixed} onChange={(e) => setFixed(e.target.value)} className="tnum mt-2 text-[1.0625rem]" />
+          <p className="mt-2 text-[0.8125rem] text-ink-soft">Useful when your mosque keeps a set jamāʿah time. The window still ends at the next prayer.</p>
         </div>
       )}
 
@@ -357,7 +355,7 @@ function ChoiceSheet({
 }) {
   return (
     <Sheet open={open} onClose={onClose} title={title} description={description}>
-      <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line" role="listbox" aria-label={title}>
+      <ul className="divide-y divide-line border-y border-line" role="listbox" aria-label={title}>
         {options.map((o) => (
           <li key={o.id}>
             <button
@@ -368,10 +366,10 @@ function ChoiceSheet({
                 onChange(o.id);
                 onClose();
               }}
-              className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 py-3 text-left text-[15px] transition-colors hover:bg-surface-2"
+              className="flex min-h-[52px] w-full items-center justify-between gap-3 py-3 text-left text-[0.9375rem]"
             >
               {o.label}
-              {o.id === value && <Check className="size-4 text-accent" strokeWidth={2.25} />}
+              {o.id === value && <Check className="size-4" strokeWidth={2.25} />}
             </button>
           </li>
         ))}
@@ -426,11 +424,11 @@ function NotificationsGroup() {
     <Group title="Notifications" footer={footer}>
       <Row label="Allow on this device" hint={ready ? "On" : blocked ? "Blocked" : "Off"}>
         {busy ? (
-          <LoaderCircle className="size-5 animate-spin text-muted" />
+          <LoaderCircle className="size-5 animate-spin text-ink-soft" />
         ) : support === "supported" && !blocked ? (
           <Switch label="Allow notifications on this device" checked={enabled} onChange={toggle} />
         ) : (
-          <BellOff className="size-5 text-faint" strokeWidth={1.75} />
+          <BellOff className="size-5 text-ink-faint" strokeWidth={1.75} />
         )}
       </Row>
       {ready && (
@@ -451,8 +449,8 @@ function NotificationsGroup() {
               <Switch label="Tahajjud reminder" checked={s.notifyTahajjud} onChange={(notifyTahajjud) => update({ notifyTahajjud })} />
             </Row>
           )}
-          <div className="px-4 py-3.5">
-            <div className="mb-2.5 text-[15px]">Prayers</div>
+          <div className="py-3.5">
+            <div className="mb-2.5 text-[0.9375rem]">Prayers</div>
             <div className="flex flex-wrap gap-2">
               {FARD.map((p) => {
                 const on = s.notifyPrayers.includes(p);
@@ -463,8 +461,8 @@ function NotificationsGroup() {
                     aria-pressed={on}
                     onClick={() => update({ notifyPrayers: on ? s.notifyPrayers.filter((x) => x !== p) : [...s.notifyPrayers, p] })}
                     className={cn(
-                      "press h-9 rounded-full px-3.5 text-[13px] font-medium transition-colors",
-                      on ? "bg-accent text-accent-ink" : "bg-surface-2 text-muted hover:text-ink",
+                      "press h-9 rounded-full px-3.5 text-[0.8125rem] font-medium transition-colors",
+                      on ? "bg-ink text-btn-ink" : "bg-fill text-ink-soft hover:text-ink",
                     )}
                   >
                     {PRAYER_META[p].name}
@@ -480,26 +478,15 @@ function NotificationsGroup() {
 }
 
 function AppearanceGroup() {
-  const { theme, setTheme } = useTheme();
   const timeFormat = useApp((s) => s.settings.timeFormat);
   const update = useApp((s) => s.updateSettings);
+  const arabicNames = usePrefs((s) => s.arabicNames);
+  const setPrefs = usePrefs((s) => s.set);
 
   return (
-    <Group title="Appearance">
-      <Row label="Theme">
-        <div className="w-[200px]">
-          <Segmented
-            label="Theme"
-            size="sm"
-            value={(theme ?? "system") as "system" | "light" | "dark"}
-            onChange={setTheme}
-            options={[
-              { value: "system", label: "Auto" },
-              { value: "light", label: "Light" },
-              { value: "dark", label: "Dark" },
-            ]}
-          />
-        </div>
+    <Group title="Appearance" footer="The colours follow the sky where you are, from dawn to night.">
+      <Row label="Arabic names" hint="Shown beside each prayer name">
+        <Switch label="Arabic names" checked={arabicNames} onChange={(on) => setPrefs({ arabicNames: on })} />
       </Row>
       <Row label="Clock">
         <div className="w-[200px]">
@@ -532,7 +519,7 @@ function SignOutRow() {
   return (
     <ButtonRow
       label="Sign out"
-      icon={busy ? <LoaderCircle className="size-4 animate-spin text-muted" /> : <LogOut className="size-4 text-muted" strokeWidth={1.75} />}
+      icon={busy ? <LoaderCircle className="size-4 animate-spin text-ink-soft" /> : <LogOut className="size-4 text-ink-soft" strokeWidth={1.75} />}
       onClick={async () => {
         setBusy(true);
         await signOutEverywhere();
@@ -565,12 +552,12 @@ function DeleteSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
     <Sheet open={open} onClose={onClose} title="Delete account" description="This permanently erases your account and every prayer, note and setting. It can't be undone.">
       <div className="space-y-4">
         <div>
-          <label htmlFor="confirm-delete" className="mb-1.5 block text-[13px] text-muted">
-            Type <span className="font-medium text-ink">delete</span> to confirm
+          <label htmlFor="confirm-delete" className="mb-1.5 block text-[0.8125rem] text-ink-soft">
+            Type <span className="font-semibold text-ink">delete</span> to confirm
           </label>
           <Input id="confirm-delete" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="off" autoCapitalize="none" />
         </div>
-        {error && <p className="text-[13px] text-missed">{error}</p>}
+        {error && <p className="text-[0.8125rem] text-danger">{error}</p>}
         <Button variant="danger" size="lg" className="w-full" disabled={confirm.trim().toLowerCase() !== "delete" || busy} onClick={remove}>
           {busy && <LoaderCircle className="size-4 animate-spin" />}
           Delete everything
