@@ -63,10 +63,15 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
         className="block overflow-visible"
         onPointerLeave={() => setHover(null)}
       >
+        <defs>
+          <pattern id="heat-excused" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="4" stroke="var(--ink-soft)" strokeWidth="1.2" />
+          </pattern>
+        </defs>
         {months.map(
           (label, i) =>
             label && (
-              <text key={i} x={LABEL_W + i * (CELL + GAP)} y={10} className="fill-muted text-[11px]">
+              <text key={i} x={LABEL_W + i * (CELL + GAP)} y={10} className="fill-ink-soft text-[11px]">
                 {label}
               </text>
             ),
@@ -74,7 +79,7 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
         {dayLabels.map(
           (label, i) =>
             label && (
-              <text key={label} x={0} y={18 + i * (CELL + GAP) + CELL - 3} className="fill-faint text-[10px]">
+              <text key={label} x={0} y={18 + i * (CELL + GAP) + CELL - 3} className="fill-ink-soft text-[10px]">
                 {label.slice(0, 1)}
               </text>
             ),
@@ -84,8 +89,8 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
             const x = LABEL_W + w * (CELL + GAP);
             const y = 18 + d * (CELL + GAP);
             if (c.kind === "future") return null;
-            const fill =
-              c.kind === "excused" ? "var(--excused-soft)" : c.kind === "untracked" ? "transparent" : LEVEL_BG[c.level];
+            const empty = c.kind === "untracked" || (c.kind === "day" && c.level === 0);
+            const fill = c.kind === "excused" ? "url(#heat-excused)" : empty ? "transparent" : LEVEL_BG[c.level];
             return (
               <rect
                 key={c.date}
@@ -95,8 +100,8 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
                 height={CELL}
                 rx={3.5}
                 fill={fill}
-                stroke={c.kind === "untracked" ? "var(--line)" : c.date === ctx.today ? "var(--ink)" : "none"}
-                strokeWidth={c.date === ctx.today ? 1.25 : 1}
+                stroke={c.date === ctx.today ? "var(--ink)" : empty ? "var(--line)" : "none"}
+                strokeWidth={c.date === ctx.today ? 1.5 : 1}
                 className="cursor-pointer transition-opacity hover:opacity-80"
                 onPointerEnter={() => setHover({ cell: c, x: x + CELL / 2, y })}
                 onClick={() => router.push(`/history?date=${c.date}`)}
@@ -107,7 +112,7 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
       </svg>
       {hover && (
         <div
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-ink px-2.5 py-1.5 text-[12px] whitespace-nowrap text-bg shadow-lg"
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-full bg-ink px-3 py-1.5 text-[12px] whitespace-nowrap text-btn-ink shadow-lg"
           style={{ left: Math.min(Math.max(hover.x, 80), width - 80), top: hover.y - 6 }}
           role="status"
         >
@@ -122,15 +127,15 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
           </span>
         </div>
       )}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-muted">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-ink-soft">
         <span>Tap a day to open it in History.</span>
         <div className="flex items-center gap-1.5">
           <span>0</span>
           {LEVEL_BG.map((bg, i) => (
-            <span key={i} className="size-[11px] rounded-[3px]" style={{ backgroundColor: bg }} />
+            <span key={i} className="size-[11px] rounded-[3px]" style={i ? { backgroundColor: bg } : { boxShadow: "inset 0 0 0 1px var(--line)" }} />
           ))}
           <span>5 prayers</span>
-          <span className="ml-3 size-[11px] rounded-[3px] bg-excused-soft" />
+          <span className="ml-3 size-[11px] rounded-[3px] [background:repeating-linear-gradient(135deg,var(--ink-soft)_0_1.2px,transparent_1.2px_4px)]" />
           <span>Excused</span>
         </div>
       </div>

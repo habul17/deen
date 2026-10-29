@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Moon, Sparkles } from "lucide-react";
 import {
   daysBetween,
   insight,
@@ -15,7 +14,6 @@ import {
 import { useApp } from "@/store/app-store";
 import { useNow } from "@/hooks/use-now";
 import { useLedger } from "@/hooks/use-ledger";
-import { Segmented } from "@/components/ui/segmented";
 import { Heatmap } from "./heatmap";
 import { Breakdown } from "./breakdown";
 import { QadaPanel } from "./qada-panel";
@@ -23,6 +21,12 @@ import { QadaPanel } from "./qada-panel";
 type Range = "week" | "month" | "quarter" | "year";
 const RANGE_KEY = "deen:stats-range";
 const RANGE_LABEL: Record<Range, string> = { week: "this week", month: "the last 30 days", quarter: "the last 3 months", year: "the last year" };
+const RANGES: [Range, string][] = [
+  ["week", "Week"],
+  ["month", "Month"],
+  ["quarter", "3 months"],
+  ["year", "Year"],
+];
 
 const pct = (v: number | null) => (v === null ? "—" : `${Math.round(v * 100)}%`);
 const days = (n: number) => `${n} ${n === 1 ? "day" : "days"}`;
@@ -55,138 +59,102 @@ export function StatsView() {
   const scoredDays = span - summary.excusedDays;
 
   return (
-    <div className="pt-4 md:pt-0">
-      <header className="mb-6">
-        <h1 className="font-serif text-[34px] leading-none tracking-tight md:text-[44px]">Stats</h1>
-        <p className="mt-2 text-[14px] text-muted">Consistency over perfection. Excused days never count against you.</p>
-      </header>
+    <div className="pt-6">
+      <h1 className="display text-[2.75rem] leading-[0.95] font-semibold">Stats</h1>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Tile
-            icon={<Flame className="size-4" strokeWidth={1.75} />}
-            label="Current streak"
-            value={days(streak.current)}
-            sub={streak.current === 0 ? "Pray all five today to begin" : "All five prayed each day"}
-            accent
-          />
-          <Tile label="Best streak" value={days(streak.best)} sub="Your longest run so far" />
-          {tahajjudEnabled ? (
+      <section className="mt-8" aria-label="Streak">
+        <div className="flex items-baseline gap-3">
+          <span className="display tnum text-[5.5rem] leading-[0.9] font-semibold">{streak.current}</span>
+          <span className="text-[1.1875rem] text-ink-soft">{streak.current === 1 ? "day" : "days"} in a row</span>
+        </div>
+        <p className="mt-3 text-[0.875rem] text-ink-soft">
+          {streak.current === 0 ? "Pray all five today to begin a streak." : "All five prayed each day."} Best{" "}
+          <span className="font-semibold text-ink">{days(streak.best)}</span>
+          {tahajjudEnabled && (
             <>
-              <Tile
-                icon={<Moon className="size-4" strokeWidth={1.75} />}
-                label="Tahajjud streak"
-                value={`${night.current} ${night.current === 1 ? "night" : "nights"}`}
-                sub={`Best ${night.best}`}
-              />
-              <Tile label="Tahajjud, all time" value={String(allTime.tahajjud.nights)} sub="Nights you stood" />
-            </>
-          ) : (
-            <>
-              <Tile label="Days tracked" value={String(daysBetween(first, today))} sub="Since you began" />
-              <Tile label="All-five days" value={String(allTime.completeDays)} sub="All time" />
+              {" · "}Tahajjud <span className="font-semibold text-ink">{night.current}</span> {night.current === 1 ? "night" : "nights"}
             </>
           )}
-        </div>
+        </p>
+      </section>
 
-        <Card title="Consistency" subtitle="Each square is a day, shaded by prayers kept.">
-          <Heatmap ledger={ledger} ctx={ctx} first={first} />
-        </Card>
+      <Section title="Consistency" subtitle="Each square is a day, shaded by prayers kept.">
+        <Heatmap ledger={ledger} ctx={ctx} first={first} />
+      </Section>
 
-        <div className="pt-4">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-[17px] font-medium tracking-tight">Breakdown</h2>
-              <p className="text-[13px] text-muted">
-                {RANGE_LABEL[range][0].toUpperCase() + RANGE_LABEL[range].slice(1)} · {days(scoredDays)}
-                {summary.excusedDays > 0 && ` (${summary.excusedDays} excused)`}
-              </p>
-            </div>
-            <div className="sm:w-[340px]">
-              <Segmented<Range>
-                label="Period"
-                size="sm"
-                value={range}
-                onChange={pick}
-                options={[
-                  { value: "week", label: "Week" },
-                  { value: "month", label: "Month" },
-                  { value: "quarter", label: "3 months" },
-                  { value: "year", label: "Year" },
-                ]}
-              />
-            </div>
+      <section className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <h2 className="text-[1.0625rem] font-semibold">Breakdown</h2>
+          <div role="radiogroup" aria-label="Period" className="-mr-1.5 flex text-[0.8125rem]">
+            {RANGES.map(([r, label]) => (
+              <button
+                key={r}
+                role="radio"
+                aria-checked={range === r}
+                onClick={() => pick(r)}
+                className={range === r ? "px-1.5 py-1 font-semibold text-ink" : "px-1.5 py-1 text-ink-soft hover:text-ink"}
+              >
+                {label}
+              </button>
+            ))}
           </div>
-
-          <motion.div key={range} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <Tile label="Prayed" value={pct(ratio(summary.prayed, summary.expected))} sub={`${summary.prayed} of ${summary.expected} prayers`} />
-              <Tile label="On time" value={pct(ratio(summary.onTime, summary.prayed))} sub="Of prayers prayed" />
-              <Tile label="In congregation" value={pct(ratio(summary.congregation, summary.prayed))} sub="Jamāʿah or masjid" />
-              <Tile label="With sunnah" value={pct(ratio(summary.sunnah, summary.prayed))} sub="Rawātib before or after" />
-            </div>
-
-            <div className="flex items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3.5 text-[14px] text-ink-2">
-              <Sparkles className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={1.75} />
-              <p>{insight(summary)}</p>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-              <Card title="By prayer" subtitle="How each prayer was kept.">
-                <Breakdown summary={summary} />
-              </Card>
-              {tahajjudEnabled && (
-                <Card title="Night prayer" subtitle="Tahajjud is voluntary and tracked on its own.">
-                  <dl className="grid grid-cols-2 gap-4">
-                    <Figure label="Nights" value={String(summary.tahajjud.nights)} />
-                    <Figure
-                      label="Avg. rakʿāt"
-                      value={summary.tahajjud.nights ? (summary.tahajjud.rakats / summary.tahajjud.nights).toFixed(1).replace(/\.0$/, "") : "—"}
-                    />
-                    <Figure label="Of nights" value={pct(ratio(summary.tahajjud.nights, span))} />
-                    <Figure label="Total rakʿāt" value={String(summary.tahajjud.rakats)} />
-                  </dl>
-                </Card>
-              )}
-            </div>
-          </motion.div>
         </div>
+        <p className="mt-0.5 text-[0.8125rem] text-ink-soft">
+          {RANGE_LABEL[range][0].toUpperCase() + RANGE_LABEL[range].slice(1)} · {days(scoredDays)}
+          {summary.excusedDays > 0 && ` (${summary.excusedDays} excused)`}
+        </p>
 
-        <div className="pt-4">
-          <QadaPanel ledger={ledger} />
-        </div>
-      </div>
+        <motion.div key={range} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+          <dl className="mt-4 divide-y divide-line border-y border-line">
+            <Stat label="Prayed" value={pct(ratio(summary.prayed, summary.expected))} sub={`${summary.prayed} of ${summary.expected}`} />
+            <Stat label="On time" value={pct(ratio(summary.onTime, summary.prayed))} sub="of prayers prayed" />
+            <Stat label="In congregation" value={pct(ratio(summary.congregation, summary.prayed))} sub="jamāʿah or masjid" />
+            <Stat label="With sunnah" value={pct(ratio(summary.sunnah, summary.prayed))} sub="before or after" />
+          </dl>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed">{insight(summary)}</p>
+
+          <Section title="By prayer" subtitle="How each prayer was kept.">
+            <Breakdown summary={summary} />
+          </Section>
+
+          {tahajjudEnabled && (
+            <Section title="Night prayer" subtitle="Tahajjud is voluntary and tracked on its own.">
+              <dl className="divide-y divide-line border-y border-line">
+                <Stat label="Nights" value={String(summary.tahajjud.nights)} sub={`${pct(ratio(summary.tahajjud.nights, span))} of nights`} />
+                <Stat
+                  label="Average rakʿāt"
+                  value={summary.tahajjud.nights ? (summary.tahajjud.rakats / summary.tahajjud.nights).toFixed(1).replace(/\.0$/, "") : "—"}
+                  sub={`${summary.tahajjud.rakats} in total`}
+                />
+                <Stat label="All time" value={String(allTime.tahajjud.nights)} sub="nights you stood" />
+              </dl>
+            </Section>
+          )}
+        </motion.div>
+      </section>
+
+      <QadaPanel ledger={ledger} />
     </div>
   );
 }
 
-function Tile({ label, value, sub, icon, accent }: { label: string; value: string; sub?: string; icon?: React.ReactNode; accent?: boolean }) {
+function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-[22px] border border-line bg-surface px-4 py-4 sm:px-5" style={{ boxShadow: "var(--shadow-card)" }}>
-      <div className={accent ? "flex items-center gap-1.5 text-[13px] text-accent" : "flex items-center gap-1.5 text-[13px] text-muted"}>
-        {icon}
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <dt className="text-[0.9375rem]">
         {label}
-      </div>
-      <div className="mt-2 text-[28px] leading-none font-semibold tracking-tight sm:text-[32px]">{value}</div>
-      {sub && <div className="mt-2 text-[12px] leading-snug text-muted">{sub}</div>}
+        {sub && <span className="ml-2 text-[0.8125rem] text-ink-soft">{sub}</span>}
+      </dt>
+      <dd className="tnum text-[1.0625rem] font-semibold">{value}</dd>
     </div>
   );
 }
 
-function Figure({ label, value }: { label: string; value: string }) {
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div>
-      <dt className="text-[13px] text-muted">{label}</dt>
-      <dd className="mt-1 text-[24px] leading-none font-semibold tracking-tight">{value}</dd>
-    </div>
-  );
-}
-
-function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-[28px] border border-line bg-surface p-5 sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
-      <h2 className="text-[17px] font-medium tracking-tight">{title}</h2>
-      {subtitle && <p className="mt-1 mb-5 text-[13px] text-muted">{subtitle}</p>}
+    <section className="mt-12">
+      <h2 className="text-[1.0625rem] font-semibold">{title}</h2>
+      {subtitle && <p className="mt-0.5 mb-4 text-[0.8125rem] text-ink-soft">{subtitle}</p>}
       {children}
     </section>
   );
