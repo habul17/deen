@@ -22,11 +22,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [ready, hasUser, onboarded, pathname, router]);
 
   return (
-    <div className="min-h-dvh md:pl-[248px]">
-      <Nav />
-      <main className="mx-auto w-full max-w-[1080px] px-4 pt-[max(env(safe-area-inset-top),12px)] pb-[calc(88px+env(safe-area-inset-bottom))] sm:px-6 md:px-10 md:pt-10 md:pb-16">
-        {ready ? children : <ShellSkeleton />}
+    <div className="min-h-dvh">
+      <main className="mx-auto flex min-h-dvh w-full max-w-[440px] flex-col px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-[calc(4.75rem+env(safe-area-inset-bottom))]">
+        {ready ? children : <div className="flex-1" aria-busy />}
       </main>
+      <Nav />
       <SyncBadge />
       <Toaster />
     </div>
@@ -64,18 +64,4 @@ export function useBootstrap() {
       navigator.serviceWorker?.removeEventListener("message", onWorkerMessage);
     };
   }, []);
-}
-
-function ShellSkeleton() {
-  return (
-    <div className="animate-pulse space-y-4 pt-4" aria-hidden>
-      <div className="h-5 w-40 rounded-md bg-surface-2" />
-      <div className="h-44 rounded-3xl bg-surface-2" />
-      <div className="space-y-2">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-2xl bg-surface-2" />
-        ))}
-      </div>
-    </div>
-  );
 }

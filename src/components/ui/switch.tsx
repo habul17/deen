@@ -24,14 +24,14 @@ export function Switch({
       onClick={() => onChange(!checked)}
       className={cn(
         "relative inline-flex h-[30px] w-[50px] shrink-0 items-center rounded-full p-[3px] transition-colors duration-200",
-        checked ? "bg-accent" : "bg-line-strong",
+        checked ? "bg-ink" : "ring-[1.5px] ring-ink-soft ring-inset",
         disabled && "opacity-50",
       )}
     >
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 600, damping: 36 }}
-        className={cn("block size-6 rounded-full bg-white shadow-[0_1px_3px_rgb(0_0_0/0.2)]", checked && "ml-auto")}
+        className={cn("block size-6 rounded-full", checked ? "ml-auto bg-btn-ink" : "scale-[0.72] bg-ink-soft")}
       />
     </button>
   );

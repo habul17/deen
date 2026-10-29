@@ -6,17 +6,17 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "md" | "lg" | "sm";
 
 const base =
-  "press inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors duration-200 disabled:opacity-50 select-none whitespace-nowrap";
+  "press inline-flex items-center justify-center gap-2 rounded-full font-medium transition-[opacity,background-color] duration-200 disabled:opacity-45 select-none whitespace-nowrap";
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-accent-ink hover:bg-accent-hover",
-  secondary: "bg-surface text-ink border border-line hover:border-line-strong",
-  ghost: "text-ink-2 hover:bg-surface-2",
-  danger: "bg-missed-soft text-missed hover:brightness-95",
+  primary: "bg-ink text-btn-ink hover:opacity-90",
+  secondary: "text-ink ring-1 ring-line ring-inset hover:bg-fill",
+  ghost: "text-ink hover:bg-fill",
+  danger: "text-danger ring-1 ring-current/30 ring-inset hover:bg-fill",
 };
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-11 px-4 text-[15px]",
-  lg: "h-12 px-5 text-[15px]",
+  sm: "h-9 px-4 text-sm",
+  md: "h-11 px-5 text-[15px]",
+  lg: "h-12 px-6 text-[15px]",
 };
 
 export function Button({

@@ -23,25 +23,25 @@ function DayBody({ date, onClose }: { date: string; onClose: () => void }) {
 
   return (
     <div className="space-y-6">
-      <div className="divide-y divide-line rounded-2xl border border-line">
-        <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+      <div className="divide-y divide-line border-y border-line">
+        <div className="flex items-center justify-between gap-4 py-3.5">
           <div>
             <div className="text-[15px]">Travelling</div>
-            <div className="text-[13px] leading-snug text-muted">Dhuhr, Asr and Isha are shortened to two rakʿāt; combining is allowed.</div>
+            <div className="text-[13px] leading-snug text-ink-soft">Dhuhr, Asr and Isha are shortened to two rakʿāt; combining is allowed.</div>
           </div>
           <Switch label="Travelling" checked={day.travel} onChange={(travel) => setDay(date, { travel })} />
         </div>
-        <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+        <div className="flex items-center justify-between gap-4 py-3.5">
           <div>
             <div className="text-[15px]">Excused</div>
-            <div className="text-[13px] leading-snug text-muted">Haiḍ or nifās. No prayers are expected, nothing counts as missed, and streaks are kept.</div>
+            <div className="text-[13px] leading-snug text-ink-soft">Haiḍ or nifās. No prayers are expected, nothing counts as missed, and streaks are kept.</div>
           </div>
           <Switch label="Excused" checked={day.excused} onChange={(excused) => setDay(date, { excused })} />
         </div>
       </div>
 
       <div>
-        <label htmlFor="day-note" className="mb-2 block px-1 text-[12px] font-medium tracking-[0.08em] text-muted uppercase">
+        <label htmlFor="day-note" className="mb-2 block text-[13px] text-ink-soft">
           Private note
         </label>
         <textarea
@@ -51,9 +51,9 @@ function DayBody({ date, onClose }: { date: string; onClose: () => void }) {
           rows={4}
           maxLength={2000}
           placeholder="A reflection, a duʿāʾ, something to remember…"
-          className="w-full resize-none rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] leading-relaxed outline-none placeholder:text-faint focus:border-accent focus:ring-4 focus:ring-accent-soft"
+          className="w-full resize-none rounded-2xl bg-fill px-4 py-3 text-[15px] leading-relaxed outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-ink"
         />
-        <p className="mt-1.5 px-1 text-[12px] text-faint">Only you can see this.</p>
+        <p className="mt-1.5 text-[12px] text-ink-soft">Only you can see this.</p>
       </div>
 
       <Button

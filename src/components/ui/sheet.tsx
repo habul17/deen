@@ -61,7 +61,7 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center md:p-6">
           <motion.div
-            className="absolute inset-0 bg-[rgb(10_12_11/0.42)] backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[rgb(7_10_28/0.45)] backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -75,10 +75,9 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
             aria-labelledby={titleId}
             tabIndex={-1}
             className={cn(
-              "relative flex max-h-[92dvh] w-full flex-col rounded-t-[28px] bg-surface outline-none md:max-w-lg md:rounded-[28px]",
+              "surface relative flex max-h-[92dvh] w-full flex-col rounded-t-[28px] shadow-[0_-24px_60px_-20px_rgb(7_10_28/0.5)] outline-none md:max-w-[440px] md:rounded-[28px]",
               className,
             )}
-            style={{ boxShadow: "var(--shadow-sheet)" }}
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%", transition: { duration: 0.24, ease: [0.4, 0, 1, 1] } }}
@@ -96,18 +95,18 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
               className="flex shrink-0 cursor-grab touch-none flex-col items-center pt-2.5 active:cursor-grabbing"
               onPointerDown={(e) => drag.start(e)}
             >
-              <span className="h-1 w-9 rounded-full bg-line-strong" />
+              <span className="h-1 w-9 rounded-full bg-fill-strong" />
               <div className="flex w-full items-start justify-between gap-4 px-6 pt-4 pb-2">
                 <div className="min-w-0">
-                  <h2 id={titleId} className="font-serif text-[28px] leading-none tracking-tight">
+                  <h2 id={titleId} className="display text-[28px] leading-none font-semibold">
                     {title}
                   </h2>
-                  {description && <div className="mt-2 text-sm text-muted">{description}</div>}
+                  {description && <div className="mt-2 text-sm text-ink-soft">{description}</div>}
                 </div>
                 <button
                   onClick={onClose}
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="press -mt-1 -mr-2 grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-surface-2 hover:text-ink"
+                  className="press -mt-1 -mr-2 grid size-9 shrink-0 place-items-center rounded-full text-ink-soft hover:bg-fill hover:text-ink"
                   aria-label="Close"
                 >
                   <X className="size-[18px]" strokeWidth={1.75} />

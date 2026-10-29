@@ -22,13 +22,6 @@ type Props = {
   travel: boolean;
 };
 
-const STATUS_TONE: Record<Status, string> = {
-  ON_TIME: "text-accent",
-  LATE: "text-late",
-  QADA: "text-qada",
-  MISSED: "text-missed",
-};
-
 export function PrayerSheet(props: Props) {
   // Remount the body per open so the draft always starts from the saved record.
   return (
@@ -69,9 +62,9 @@ function SheetBody({ onClose, date, prayer, existing, travel }: Props) {
             label="Status"
             value={touched ? draft.status : null}
             onChange={(status) => patch({ status })}
-            options={statuses.map((s) => ({ value: s, label: STATUS_LABEL[s], tone: STATUS_TONE[s] }))}
+            options={statuses.map((s) => ({ value: s, label: STATUS_LABEL[s] }))}
           />
-          <p className="mt-2 px-1 text-[13px] leading-relaxed text-muted">
+          <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
             {draft.status === "QADA"
               ? "Missed in its time and made up afterwards."
               : draft.status === "MISSED"
@@ -85,8 +78,8 @@ function SheetBody({ onClose, date, prayer, existing, travel }: Props) {
 
       {isTahajjud && (
         <Field label="Rakʿāt">
-          <div className="flex items-center justify-between rounded-2xl border border-line px-4 py-2">
-            <span className="text-[15px] text-ink-2">Prayed tonight</span>
+          <div className="flex items-center justify-between border-y border-line py-2">
+            <span className="text-[15px]">Prayed tonight</span>
             <Stepper label="rakʿāt" value={draft.rakats ?? 2} min={2} max={20} step={2} onChange={(rakats) => patch({ rakats })} />
           </div>
         </Field>
@@ -105,7 +98,7 @@ function SheetBody({ onClose, date, prayer, existing, travel }: Props) {
 
       {prayed && (meta.sunnahBefore || meta.sunnahAfter || prayer === "ISHA" || (travel && meta.shortenable)) && (
         <Field label="Also prayed">
-          <div className="divide-y divide-line rounded-2xl border border-line">
+          <div className="divide-y divide-line border-y border-line">
             {meta.sunnahBefore && (
               <ToggleRow label="Sunnah before" hint={meta.sunnahBefore} checked={draft.sunnahBefore} onChange={(v) => patch({ sunnahBefore: v })} />
             )}
@@ -129,7 +122,7 @@ function SheetBody({ onClose, date, prayer, existing, travel }: Props) {
         {existing && (
           <Button
             variant="ghost"
-            className="text-missed"
+            className="text-danger"
             onClick={() => {
               setLog(date, prayer, null);
               onClose();
@@ -157,7 +150,7 @@ function SheetBody({ onClose, date, prayer, existing, travel }: Props) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-2 px-1 text-[12px] font-medium tracking-[0.08em] text-muted uppercase">{label}</div>
+      <div className="mb-2 text-[13px] text-ink-soft">{label}</div>
       {children}
     </div>
   );
@@ -165,10 +158,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function ToggleRow({ label, hint, checked, onChange }: { label: string; hint: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
+    <div className="flex items-center justify-between gap-4 py-3">
       <div>
         <div className="text-[15px]">{label}</div>
-        <div className="text-[13px] text-muted">{hint}</div>
+        <div className="text-[13px] text-ink-soft">{hint}</div>
       </div>
       <Switch label={label} checked={checked} onChange={onChange} />
     </div>

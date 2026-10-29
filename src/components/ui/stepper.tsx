@@ -20,7 +20,7 @@ export function Stepper({
   label: string;
 }) {
   const btn =
-    "press grid size-9 place-items-center rounded-full text-ink-2 transition-colors hover:bg-surface-2 disabled:opacity-30";
+    "press grid size-9 place-items-center rounded-full text-ink ring-1 ring-line ring-inset transition-colors hover:bg-fill disabled:opacity-30";
   return (
     <div className="flex items-center gap-1" role="group" aria-label={label}>
       <button type="button" className={btn} onClick={() => onChange(Math.max(min, value - step))} disabled={value <= min} aria-label={`Decrease ${label}`}>
