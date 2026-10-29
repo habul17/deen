@@ -10,6 +10,6 @@ export default defineConfig({
   },
   datasource: {
     // Migrations need a direct (non-pooled) connection; the app itself uses the pooled one.
-    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
+    url: process.env["DIRECT_URL"] || process.env["DATABASE_URL"],
   },
 });
