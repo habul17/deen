@@ -1,98 +1,146 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/*
+ * The whole app sits on a live sky. src/lib/sky.ts paints these variables onto <html> for the
+ * current minute: the gradient (--s1..3) and, for each zone of the screen, an ink colour plus the
+ * lightest veil that keeps it readable. Registering them lets the browser fade between minutes.
+ */
+@property --s1 { syntax: "<color>"; inherits: true; initial-value: #070a1c; }
+@property --s2 { syntax: "<color>"; inherits: true; initial-value: #0f1430; }
+@property --s3 { syntax: "<color>"; inherits: true; initial-value: #1a1d3e; }
+@property --t-ink { syntax: "<color>"; inherits: true; initial-value: #eef0fa; }
+@property --t-soft { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.72); }
+@property --t-line { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.16); }
+@property --t-btn { syntax: "<color>"; inherits: true; initial-value: #0e1426; }
+@property --t-veil { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --l-ink { syntax: "<color>"; inherits: true; initial-value: #eef0fa; }
+@property --l-soft { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.72); }
+@property --l-line { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.16); }
+@property --l-btn { syntax: "<color>"; inherits: true; initial-value: #0e1426; }
+@property --l-veil { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --p-ink { syntax: "<color>"; inherits: true; initial-value: #eef0fa; }
+@property --p-soft { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.72); }
+@property --p-line { syntax: "<color>"; inherits: true; initial-value: rgb(238 240 250 / 0.16); }
+@property --p-btn { syntax: "<color>"; inherits: true; initial-value: #0e1426; }
+@property --p-veil { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --stars { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --orb-x { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
+@property --orb-y { syntax: "<percentage>"; inherits: true; initial-value: 37%; }
 
 :root {
-  --bg: #f6f3ec;
-  --surface: #fdfbf7;
-  --surface-2: #efebe2;
-  --ink: #191b19;
-  --ink-2: #3c403c;
-  --muted: #73776f;
-  --faint: #a3a59c;
-  --line: #e4ded2;
-  --line-strong: #d3ccbd;
-
-  --accent: #0f5f4a;
-  --accent-hover: #0c5140;
-  --accent-ink: #f6f3ec;
-  --accent-soft: #e1ebe4;
-
-  --late: #a8691b;
-  --late-soft: #f3e7d3;
-  --missed: #a8432c;
-  --missed-soft: #f4e0d9;
-  --qada: #3d55a0;
-  --qada-soft: #e2e6f0;
-  --excused: #8a7f9c;
-  --excused-soft: #ebe7f0;
-
-  --shadow-sheet: 0 -1px 0 var(--line), 0 -24px 60px -20px rgb(25 27 25 / 0.18);
-  --shadow-card: 0 1px 0 rgb(25 27 25 / 0.03), 0 1px 2px rgb(25 27 25 / 0.04);
+  --ink: var(--p-ink);
+  --ink-soft: var(--p-soft);
+  --line: var(--p-line);
+  --btn-ink: var(--p-btn);
+  --vt: var(--p-veil);
+  --vl: var(--p-veil);
+  --danger: #b4321f;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-pop: cubic-bezier(0.3, 1.6, 0.5, 1);
 
-  color-scheme: light;
+  background-color: var(--s1);
+  color-scheme: dark;
+  transition:
+    --s1 1.2s, --s2 1.2s, --s3 1.2s,
+    --t-ink 1.2s, --t-soft 1.2s, --t-line 1.2s, --t-btn 1.2s, --t-veil 1.2s,
+    --l-ink 1.2s, --l-soft 1.2s, --l-line 1.2s, --l-btn 1.2s, --l-veil 1.2s,
+    --p-ink 1.2s, --p-soft 1.2s, --p-line 1.2s, --p-btn 1.2s, --p-veil 1.2s,
+    --stars 1.2s, --orb-x 1.2s, --orb-y 1.2s;
 }
 
-.dark {
-  --bg: #0d100f;
-  --surface: #141816;
-  --surface-2: #1b201d;
-  --ink: #ebe8e1;
-  --ink-2: #c9c6be;
-  --muted: #8b918b;
-  --faint: #5d635e;
-  --line: #232926;
-  --line-strong: #313834;
+:root[data-mode="light"] {
+  color-scheme: light;
+  --danger: #a3301e;
+}
 
-  --accent: #5cc5a0;
-  --accent-hover: #6fd2ad;
-  --accent-ink: #0b1c16;
-  --accent-soft: #15302a;
+:root[data-mode="dark"] {
+  --danger: #ff9c86;
+}
 
-  --late: #d99a45;
-  --late-soft: #33291a;
-  --missed: #dc7258;
-  --missed-soft: #37211c;
-  --qada: #8197e0;
-  --qada-soft: #1f2639;
-  --excused: #b4a9c7;
-  --excused-soft: #262230;
+/* Today splits the screen: the name up top, the list at the bottom, each with its own ink. */
+:root[data-veil="zones"] {
+  --vt: var(--t-veil);
+  --vl: var(--l-veil);
+}
 
-  --shadow-sheet: 0 -1px 0 var(--line), 0 -24px 60px -20px rgb(0 0 0 / 0.6);
-  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.02);
+.zone-t,
+.zone-l {
+  color: var(--ink);
+}
+.zone-t {
+  --ink: var(--t-ink);
+  --ink-soft: var(--t-soft);
+  --line: var(--t-line);
+  --btn-ink: var(--t-btn);
+}
+.zone-l {
+  --ink: var(--l-ink);
+  --ink-soft: var(--l-soft);
+  --line: var(--l-line);
+  --btn-ink: var(--l-btn);
+}
 
+/* Solid panels (sheets, menus) that sit above the sky. */
+.surface {
+  --ink: #0e1426;
+  --ink-soft: rgb(14 20 38 / 0.66);
+  --line: rgb(14 20 38 / 0.1);
+  --btn-ink: #f4f6fb;
+  --danger: #a3301e;
+  background-color: #f6f7fb;
+  color: var(--ink);
+  color-scheme: light;
+}
+:root[data-mode="dark"] .surface {
+  --ink: #eef0fa;
+  --ink-soft: rgb(238 240 250 / 0.66);
+  --line: rgb(238 240 250 / 0.11);
+  --btn-ink: #0e1426;
+  --danger: #ff9c86;
+  background-color: #141831;
   color-scheme: dark;
 }
 
 @theme inline {
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
-  --color-ink-2: var(--ink-2);
-  --color-muted: var(--muted);
-  --color-faint: var(--faint);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: color-mix(in srgb, var(--ink) 42%, transparent);
   --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-ink: var(--accent-ink);
-  --color-accent-soft: var(--accent-soft);
-  --color-late: var(--late);
-  --color-late-soft: var(--late-soft);
-  --color-missed: var(--missed);
-  --color-missed-soft: var(--missed-soft);
-  --color-qada: var(--qada);
-  --color-qada-soft: var(--qada-soft);
-  --color-excused: var(--excused);
-  --color-excused-soft: var(--excused-soft);
+  --color-btn-ink: var(--btn-ink);
+  --color-fill: color-mix(in srgb, var(--ink) 7%, transparent);
+  --color-fill-strong: color-mix(in srgb, var(--ink) 13%, transparent);
+  --color-danger: var(--danger);
 
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
   --font-arabic: var(--font-naskh), "Geeza Pro", serif;
 
   --ease-out-quint: var(--ease-out);
+  --animate-pop: pop 0.28s var(--ease-pop);
+  --animate-breathe: breathe 2.8s ease-in-out infinite;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 0 2px var(--ink),
+      0 0 0 0 var(--line);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 2px var(--ink),
+      0 0 0 6px var(--line);
+  }
 }
 
 @layer base {
@@ -103,22 +151,19 @@
   }
 
   body {
-    background: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: none;
   }
 
   ::selection {
-    background: var(--accent-soft);
-    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--ink);
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -131,8 +176,76 @@
   }
 }
 
+/* The sky itself: a fixed layer behind everything. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--s1) 0%, var(--s2) 58%, var(--s3) 100%);
+}
+
+.sky-stars {
+  position: absolute;
+  inset: 0 0 45% 0;
+  opacity: var(--stars);
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 9%, #fff 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 41% 27%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 14%, #fff 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 73% 31%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 86% 7%, #fff 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 92% 24%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 38%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 34% 44%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 49%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 51% 4%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 19% 56%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 80% 58%, #fff 50%, transparent 51%);
+}
+
+.sky-orb {
+  position: absolute;
+  left: var(--orb-x);
+  top: var(--orb-y);
+  translate: -50% -50%;
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+:root[data-veil="zones"] .sky-orb {
+  opacity: 1;
+}
+:root[data-orb="sun"] .sky-orb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #fff8e6 0 45%, #ffe3a6 70%, rgb(255 227 166 / 0) 72%);
+  box-shadow: 0 0 60px 18px rgb(255 226 170 / 0.35);
+}
+:root[data-orb="moon"] .sky-orb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: inset -7px 3px 0 0 #f1ecdc;
+  rotate: -18deg;
+}
+
+.sky-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--vt) 0%, var(--vt) 40%, var(--vl) 50%, var(--vl) 100%);
+}
+
 @utility tnum {
   font-variant-numeric: tabular-nums;
+}
+
+@utility display {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
 }
 
 @utility no-scrollbar {
@@ -140,10 +253,6 @@
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-@utility safe-bottom {
-  padding-bottom: max(env(safe-area-inset-bottom), 0px);
 }
 
 @utility press {
@@ -154,6 +263,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
   *,
   *::before,
   *::after {
@@ -161,4 +273,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Fades the bottom of a scrolling page into the sky behind the tabs. */
+.tabs-fade {
+  background:
+    linear-gradient(to top, var(--vl) 55%, transparent),
+    linear-gradient(to top, var(--s3) 55%, transparent);
 }
