@@ -1,5 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="9" fill="#0f5f4a"/>
-  <path d="M10 24.5V15.2c0-3.4 2.6-6.3 6-8.2 3.4 1.9 6 4.8 6 8.2v9.3" stroke="#f6f3ec" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M8 24.5h16" stroke="#f6f3ec" stroke-width="1.8" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151a40"/>
+      <stop offset="0.6" stop-color="#3b2d63"/>
+      <stop offset="1" stop-color="#b0607a"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="9" fill="url(#sky)"/>
+  <path d="M10 24.5V15.2c0-3.4 2.6-6.3 6-8.2 3.4 1.9 6 4.8 6 8.2v9.3" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8 24.5h16" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>
 </svg>

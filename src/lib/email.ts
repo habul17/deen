@@ -22,11 +22,11 @@ export function resetPasswordEmail(name: string, url: string): Omit<Mail, "to"> 
   return {
     subject: "Reset your Deen password",
     text: `${greeting}\n\nUse the link below to choose a new password. It expires in one hour.\n\n${url}\n\nIf you didn't ask for this, you can ignore this email.`,
-    html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#1a1c1a">
+    html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0e1426">
   <p style="font-size:15px;line-height:1.6">${greeting}</p>
   <p style="font-size:15px;line-height:1.6">Use the button below to choose a new password. The link expires in one hour.</p>
-  <p style="margin:28px 0"><a href="${url}" style="background:#0f5f4a;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-size:15px;display:inline-block">Choose a new password</a></p>
-  <p style="font-size:13px;color:#6b6f69;line-height:1.6">If you didn't ask for this, you can safely ignore this email.</p>
+  <p style="margin:28px 0"><a href="${url}" style="background:#0e1426;color:#fff;text-decoration:none;padding:12px 22px;border-radius:999px;font-size:15px;display:inline-block">Choose a new password</a></p>
+  <p style="font-size:13px;color:#5d6275;line-height:1.6">If you didn't ask for this, you can safely ignore this email.</p>
 </div>`,
   };
 }
