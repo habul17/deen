@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  settings          Settings?
+  prayerLogs        PrayerLog[]
+  days              DayEntry[]
+  qadaEntries       QadaEntry[]
+  pushSubscriptions PushSubscription[]
+  notificationLogs  NotificationLog[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ─── Prayer tracking ─────────────────────────────────────────────────────────
+
+enum Prayer {
+  TAHAJJUD
+  FAJR
+  DHUHR
+  ASR
+  MAGHRIB
+  ISHA
+}
+
+enum PrayerStatus {
+  ON_TIME
+  LATE
+  QADA
+  MISSED
+}
+
+enum Congregation {
+  ALONE
+  JAMAAH
+  MASJID
+}
+
+model Settings {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  onboarded Boolean @default(false)
+
+  // Location
+  latitude     Float?
+  longitude    Float?
+  locationName String?
+  countryCode  String?
+  timezone     String  @default("UTC")
+
+  // Calculation
+  method          String @default("MuslimWorldLeague")
+  madhab          String @default("shafi")
+  highLatRule     String @default("auto")
+  // { [prayer]: { offset: number, fixed: "HH:mm" | null } }
+  adjustments     Json   @default("{}")
+  tahajjudEnabled Boolean @default(true)
+
+  // Qada backlog entered by the user, per prayer
+  qadaBaseline Json @default("{}")
+
+  // Notifications
+  notifyAdhan     Boolean @default(true)
+  notifyNudge     Boolean @default(true)
+  nudgeAfterMin   Int     @default(30)
+  notifyTahajjud  Boolean @default(false)
+  // Prayers the user wants reminders for, e.g. ["FAJR","DHUHR"]
+  notifyPrayers   Prayer[] @default([FAJR, DHUHR, ASR, MAGHRIB, ISHA])
+
+  // Appearance
+  timeFormat String @default("auto")
+
+  clientUpdatedAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model PrayerLog {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date   String // YYYY-MM-DD in the user's timezone
+  prayer Prayer
+  status PrayerStatus
+
+  congregation Congregation?
+  sunnahBefore Boolean       @default(false)
+  sunnahAfter  Boolean       @default(false)
+  witr         Boolean       @default(false)
+  combined     Boolean       @default(false)
+  rakats       Int?
+
+  clientUpdatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, date, prayer])
+  @@index([userId, date])
+  @@map("prayer_log")
+}
+
+model DayEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date    String
+  excused Boolean @default(false)
+  travel  Boolean @default(false)
+  note    String?
+
+  clientUpdatedAt DateTime
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@map("day_entry")
+}
+
+// One row per qada prayer made up from the backlog
+model QadaEntry {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prayer    Prayer
+  createdAt DateTime
+
+  @@index([userId])
+  @@map("qada_entry")
+}
+
+// ─── Notifications ───────────────────────────────────────────────────────────
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("push_subscription")
+}
+
+model NotificationLog {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date   String
+  prayer Prayer
+  kind   String // "adhan" | "nudge"
+  sentAt DateTime @default(now())
+
+  @@unique([userId, date, prayer, kind])
+  @@map("notification_log")
+}
