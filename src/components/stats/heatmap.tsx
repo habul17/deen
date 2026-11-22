@@ -127,17 +127,14 @@ export function Heatmap({ ledger, ctx, first }: { ledger: Ledger; ctx: TodayCont
           </span>
         </div>
       )}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-ink-soft">
-        <span>Tap a day to open it in History.</span>
-        <div className="flex items-center gap-1.5">
-          <span>0</span>
-          {LEVEL_BG.map((bg, i) => (
-            <span key={i} className="size-[11px] rounded-[3px]" style={i ? { backgroundColor: bg } : { boxShadow: "inset 0 0 0 1px var(--line)" }} />
-          ))}
-          <span>5 prayers</span>
-          <span className="ml-3 size-[11px] rounded-[3px] [background:repeating-linear-gradient(135deg,var(--ink-soft)_0_1.2px,transparent_1.2px_4px)]" />
-          <span>Excused</span>
-        </div>
+      <div className="mt-3 flex items-center justify-end gap-1 text-[0.6875rem] text-ink-soft" aria-hidden>
+        <span className="mr-0.5">Less</span>
+        {LEVEL_BG.map((bg, i) => (
+          <span key={i} className="size-[9px] rounded-[2px]" style={i ? { backgroundColor: bg } : { boxShadow: "inset 0 0 0 1px var(--line)" }} />
+        ))}
+        <span className="ml-0.5">More</span>
+        <span className="ml-3 size-[9px] rounded-[2px] [background:repeating-linear-gradient(135deg,var(--ink-soft)_0_1.2px,transparent_1.2px_4px)]" />
+        <span className="ml-0.5">Excused</span>
       </div>
     </div>
   );

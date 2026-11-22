@@ -97,11 +97,11 @@ export function HistoryView() {
     <div className="pt-6">
       <h1 className="display text-[2.75rem] leading-[0.95] font-semibold">History</h1>
 
-      <section className="mt-8">
-        <div className="mb-3 flex items-center justify-between gap-3">
+      <section className="mt-8 rounded-3xl bg-fill px-4 pt-4 pb-5" aria-label="Calendar">
+        <div className="mb-2 flex items-center justify-between gap-3 pl-1">
           <div className="min-w-0">
-            <h2 className="text-[1.0625rem] font-semibold">{monthLabel}</h2>
-            <p className="truncate text-[0.8125rem] text-ink-soft">{hijriSpan}</p>
+            <h2 className="text-[1rem] font-semibold">{monthLabel}</h2>
+            <p className="truncate text-[0.75rem] text-ink-soft">{hijriSpan}</p>
           </div>
           <div className="-mr-2 flex items-center">
             {!isCurrentMonth && (
@@ -111,7 +111,7 @@ export function HistoryView() {
                   setMonth(null);
                   setSelected(null);
                 }}
-                className="mr-1 px-2 py-1.5 text-[0.8125rem] font-semibold underline-offset-[3px] hover:underline"
+                className="mr-1 rounded-full px-2.5 py-1 text-[0.75rem] font-semibold text-ink-soft transition-colors hover:bg-fill hover:text-ink"
               >
                 This month
               </button>
@@ -125,7 +125,7 @@ export function HistoryView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-[0.75rem] text-ink-soft" aria-hidden>
+        <div className="grid grid-cols-7 gap-1 text-center text-[0.6875rem] font-medium text-ink-faint" aria-hidden>
           {weekdays.map((w, i) => (
             <div key={i} className="py-1">
               {w}
@@ -162,18 +162,21 @@ export function HistoryView() {
           </AnimatePresence>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[0.8125rem] text-ink-soft">
-          <p>
-            {summary && summary.expected > 0 ? (
-              <>
-                <span className="font-semibold text-ink">{summary.completeDays}</span> complete{" "}
-                {summary.completeDays === 1 ? "day" : "days"} ·{" "}
-                <span className="font-semibold text-ink">{Math.round((pct ?? 0) * 100)}%</span> prayed
-              </>
-            ) : (
-              "Nothing logged this month yet."
-            )}
-          </p>
+        <div className="mt-4 flex items-end justify-between gap-4 border-t border-line px-1 pt-4">
+          {summary && summary.expected > 0 ? (
+            <dl className="flex gap-6">
+              <div>
+                <dt className="text-[0.6875rem] text-ink-soft">Prayed</dt>
+                <dd className="tnum mt-0.5 text-[1.25rem] leading-none font-semibold">{Math.round((pct ?? 0) * 100)}%</dd>
+              </div>
+              <div>
+                <dt className="text-[0.6875rem] text-ink-soft">Complete days</dt>
+                <dd className="tnum mt-0.5 text-[1.25rem] leading-none font-semibold">{summary.completeDays}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="text-[0.8125rem] text-ink-soft">Nothing logged this month yet.</p>
+          )}
           <Legend />
         </div>
       </section>
@@ -198,11 +201,11 @@ function DayCell({ cell, today, selected, onSelect }: { cell: HeatCell; today: D
       aria-selected={selected}
       aria-label={`${formatDayLong(cell.date)}, ${label}${entry?.travel ? ", travelling" : ""}${entry?.note ? ", has a note" : ""}`}
       onClick={onSelect}
-      className="press group flex flex-col items-center gap-1 py-1 disabled:pointer-events-none"
+      className="press group flex flex-col items-center gap-0.5 py-0.5 disabled:pointer-events-none"
     >
       <span
         className={cn(
-          "tnum grid aspect-square w-full max-w-10 place-items-center rounded-full text-[0.875rem] transition-[box-shadow,background-color] duration-300",
+          "tnum grid aspect-square w-full max-w-9 place-items-center rounded-full text-[0.8125rem] transition-[box-shadow,background-color] duration-300",
           future && "text-ink-faint",
           cell.kind === "excused" && "text-ink-soft shadow-[inset_0_0_0_1.5px_var(--line)] [background:repeating-linear-gradient(135deg,var(--line)_0_2px,transparent_2px_6px)]",
           cell.kind === "untracked" && "text-ink-faint",
@@ -223,12 +226,12 @@ function DayCell({ cell, today, selected, onSelect }: { cell: HeatCell; today: D
 
 function Legend() {
   return (
-    <div className="flex items-center gap-1.5 text-[0.75rem]" aria-hidden>
-      <span>Fewer</span>
+    <div className="flex items-center gap-1 pb-0.5 text-[0.6875rem] text-ink-soft" aria-hidden>
+      <span className="mr-0.5">Less</span>
       {LEVEL_BG.slice(1).map((bg, i) => (
-        <span key={i} className="size-2.5 rounded-full" style={{ backgroundColor: bg }} />
+        <span key={i} className="size-2 rounded-full" style={{ backgroundColor: bg }} />
       ))}
-      <span>All five</span>
+      <span className="ml-0.5">All five</span>
     </div>
   );
 }
@@ -245,25 +248,27 @@ function DayPanel({ date, today, now }: { date: DayKey; today: DayKey; now: Date
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
       aria-label={formatDayLong(date)}
-      className="mt-10"
+      className="mt-8"
     >
-      <div className="mb-2 flex items-end justify-between gap-4">
+      <div className="mb-3 flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="display text-[1.75rem] leading-tight font-semibold">{isToday ? "Today" : formatDayLong(date)}</h2>
-          <p className="truncate text-[0.8125rem] text-ink-soft">
-            {formatHijri(date)}
-            {" · "}
-            {day.excused ? "Excused" : `${day.prayed} of 5`}
-            {day.travel && " · Travelling"}
-          </p>
+          <h2 className="display text-[1.5rem] leading-tight font-semibold">{isToday ? "Today" : formatDayLong(date)}</h2>
+          <p className="truncate text-[0.75rem] text-ink-soft">{formatHijri(date)}</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <Chip>{day.excused ? "Excused" : `${day.prayed} of 5 prayed`}</Chip>
+            {day.travel && <Chip>Travelling</Chip>}
+          </div>
         </div>
-        <button onClick={() => setSheet(true)} className="shrink-0 pb-0.5 text-[0.8125rem] font-semibold underline-offset-[3px] hover:underline">
+        <button
+          onClick={() => setSheet(true)}
+          className="-mr-1 shrink-0 rounded-full px-2.5 py-1 text-[0.75rem] font-semibold text-ink-soft transition-colors hover:bg-fill hover:text-ink"
+        >
           Day options
         </button>
       </div>
 
       {day.note && (
-        <button onClick={() => setSheet(true)} className="mb-2 block w-full text-left text-[0.875rem] text-ink-soft">
+        <button onClick={() => setSheet(true)} className="mb-3 block w-full rounded-2xl bg-fill px-4 py-3 text-left text-[0.8125rem] text-ink-soft">
           <span className="line-clamp-3 whitespace-pre-line">{day.note}</span>
         </button>
       )}
@@ -275,12 +280,16 @@ function DayPanel({ date, today, now }: { date: DayKey; today: DayKey; now: Date
       )}
 
       {!isToday && !day.excused && day.prayed < 5 && (
-        <p className="mt-3 text-[0.8125rem] text-ink-soft">Forgot to log? Tap a prayer to mark it, or hold for details.</p>
+        <p className="mt-3 text-[0.75rem] text-ink-soft">Forgot to log? Tap a prayer to mark it, or hold for details.</p>
       )}
 
       <DaySheet open={sheet} onClose={() => setSheet(false)} date={date} />
     </motion.section>
   );
+}
+
+function Chip({ children }: { children: React.ReactNode }) {
+  return <span className="rounded-full bg-fill px-2.5 py-1 text-[0.6875rem] font-medium">{children}</span>;
 }
 
 function NavButton({ label, children, ...props }: React.ComponentProps<"button"> & { label: string }) {

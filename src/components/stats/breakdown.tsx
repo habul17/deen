@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { FARD, PRAYER_META, type FardKey } from "@/lib/prayer/constants";
+import { Card } from "@/components/ui/card";
 import { OUTCOMES, ratio, type Outcome, type RangeSummary } from "@/lib/prayer/stats";
 
 // One ink, stepped from strongest to weakest, so the chart reads on any sky. Missed is hatched.
@@ -26,33 +27,26 @@ export function Breakdown({ summary }: { summary: RangeSummary }) {
   });
 
   return (
-    <div>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12px] text-ink-soft" aria-label="Legend">
-          {OUTCOMES.map((o) => (
-            <li key={o} className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full" style={{ background: OUTCOME_META[o].fill }} />
-              {OUTCOME_META[o].label}
-            </li>
-          ))}
-        </ul>
+    <Card
+      title="By prayer"
+      action={
         <button
           onClick={() => setTable((t) => !t)}
-          className="text-[12px] font-semibold underline-offset-[3px] hover:underline"
+          className="-mr-1 rounded-full px-2.5 py-1 text-[0.75rem] font-semibold text-ink-soft transition-colors hover:bg-fill hover:text-ink"
           aria-pressed={table}
         >
-          {table ? "Chart" : "Table"}
+          {table ? "Show chart" : "Show table"}
         </button>
-      </div>
-
+      }
+    >
       {table ? (
         <div className="-mx-1 overflow-x-auto">
-          <table className="w-full min-w-[440px] text-[13px]">
+          <table className="w-full text-[12px]">
             <thead>
               <tr className="text-left text-ink-soft">
-                <th className="px-1 pb-2 font-medium">Prayer</th>
+                <th className="px-1 pb-2 align-bottom font-medium">Prayer</th>
                 {OUTCOMES.map((o) => (
-                  <th key={o} className="px-1 pb-2 text-right font-medium">
+                  <th key={o} className="px-1 pb-2 text-right align-bottom leading-tight font-medium">
                     {OUTCOME_META[o].label}
                   </th>
                 ))}
@@ -73,12 +67,17 @@ export function Breakdown({ summary }: { summary: RangeSummary }) {
           </table>
         </div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3.5">
+          <li className="grid grid-cols-[72px_minmax(0,1fr)_44px] gap-3 text-[0.6875rem] text-ink-soft" aria-hidden>
+            <span />
+            <span />
+            <span className="text-right">On time</span>
+          </li>
           {rows.map((r) => {
             const onTime = ratio(r.counts.ON_TIME, r.total);
             return (
               <li key={r.prayer} className="grid grid-cols-[72px_minmax(0,1fr)_44px] items-center gap-3">
-                <span className="text-[14px] font-medium">{PRAYER_META[r.prayer].name}</span>
+                <span className="text-[0.875rem] font-medium">{PRAYER_META[r.prayer].name}</span>
                 <div className="relative flex h-2.5 gap-[2px]" onPointerLeave={() => setHover(null)}>
                   {r.total === 0 ? (
                     <span className="h-full w-full rounded-full bg-line" />
@@ -121,7 +120,16 @@ export function Breakdown({ summary }: { summary: RangeSummary }) {
           })}
         </ul>
       )}
-      {!table && <p className="mt-4 text-right text-[12px] text-ink-soft">Right column: share prayed on time</p>}
-    </div>
+      {!table && (
+        <ul className="mt-5 flex flex-wrap gap-x-3.5 gap-y-1.5 border-t border-line pt-4 text-[0.6875rem] text-ink-soft" aria-label="Legend">
+          {OUTCOMES.map((o) => (
+            <li key={o} className="flex items-center gap-1.5">
+              <span className="size-2 rounded-full" style={{ background: OUTCOME_META[o].fill }} />
+              {OUTCOME_META[o].label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   );
 }
