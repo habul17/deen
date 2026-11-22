@@ -9,6 +9,7 @@ import { useApp } from "@/store/app-store";
 import { useToast } from "@/store/toast-store";
 import { Sheet } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const fmt = (n: number) => new Intl.NumberFormat().format(n);
 
@@ -34,29 +35,35 @@ export function QadaPanel({ ledger }: { ledger: Ledger }) {
   };
 
   return (
-    <section className="mt-12">
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-[1.0625rem] font-semibold">
-          Qaḍāʾ <span className="font-arabic text-[0.9375rem] font-normal text-ink-soft">قضاء</span>
-        </h2>
-        <button onClick={() => setEditing(true)} className="text-[0.8125rem] font-semibold underline-offset-[3px] hover:underline">
+    <Card
+      className="mt-4"
+      title={
+        <>
+          Qaḍāʾ <span className="font-arabic text-[0.875rem] font-normal text-ink-soft">قضاء</span>
+        </>
+      }
+      hint="From your backlog and anything marked missed"
+      action={
+        <button
+          onClick={() => setEditing(true)}
+          className="-mr-1 shrink-0 rounded-full px-2.5 py-1 text-[0.75rem] font-semibold text-ink-soft transition-colors hover:bg-fill hover:text-ink"
+        >
           {total > 0 ? "Edit backlog" : "Set backlog"}
         </button>
-      </div>
-      <p className="mt-0.5 text-[0.8125rem] text-ink-soft">Prayers to make up, from your backlog and anything marked missed.</p>
-
+      }
+    >
       {total === 0 ? (
-        <p className="mt-5 border-y border-line py-4 text-[0.875rem] text-ink-soft">
+        <p className="text-[0.875rem] leading-relaxed text-ink-soft">
           Nothing owed. If you have years of prayers to make up, set your backlog and chip away at it one prayer at a time.
         </p>
       ) : (
         <>
-          <div className="mt-6 flex items-end justify-between gap-4">
+          <div className="flex items-end justify-between gap-4">
             <div>
-              <div className="display tnum text-[3.5rem] leading-[0.9] font-semibold">{fmt(owed)}</div>
-              <div className="mt-2 text-[0.8125rem] text-ink-soft">{owed === 1 ? "prayer" : "prayers"} remaining</div>
+              <div className="display tnum text-[2.75rem] leading-[0.9] font-semibold">{fmt(owed)}</div>
+              <div className="mt-1.5 text-[0.75rem] text-ink-soft">{owed === 1 ? "prayer" : "prayers"} remaining</div>
             </div>
-            <div className="text-right text-[0.8125rem] text-ink-soft">
+            <div className="text-right text-[0.75rem] text-ink-soft">
               <span className="font-semibold text-ink">{fmt(madeUp)}</span> of {fmt(total)} made up
             </div>
           </div>
@@ -76,28 +83,34 @@ export function QadaPanel({ ledger }: { ledger: Ledger }) {
             />
           </div>
 
-          <ul className="mt-6 divide-y divide-line border-y border-line">
+          <ul className="mt-5 divide-y divide-line border-t border-line">
             {rows.map((r) => (
-              <li key={r.prayer} className="flex items-center gap-3 py-2.5">
-                <span className="w-20 text-[0.9375rem] font-medium">{PRAYER_META[r.prayer].name}</span>
-                <span className="flex-1 text-[0.875rem]">
-                  <motion.span key={r.owed} initial={{ opacity: 0.4, y: -3 }} animate={{ opacity: 1, y: 0 }} className="inline-block tnum">
+              <li key={r.prayer} className="flex items-center gap-2 py-2">
+                <span className="w-[4.5rem] text-[0.875rem] font-medium">{PRAYER_META[r.prayer].name}</span>
+                <span className="flex-1 text-[0.8125rem] text-ink-soft">
+                  <motion.span
+                    key={r.owed}
+                    initial={{ opacity: 0.4, y: -3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="inline-block font-medium text-ink tnum"
+                  >
                     {fmt(r.owed)}
                   </motion.span>{" "}
-                  <span className="text-ink-soft">left</span>
+                  left
                 </span>
                 <button
                   onClick={() => undoQada(r.prayer)}
                   disabled={r.madeUp === 0}
                   aria-label={`Undo last made-up ${PRAYER_META[r.prayer].name}`}
-                  className="press grid size-9 place-items-center rounded-full text-ink-soft transition-colors hover:bg-fill hover:text-ink disabled:invisible"
+                  className="press grid size-8 place-items-center rounded-full text-ink-soft transition-colors hover:bg-fill hover:text-ink disabled:invisible"
                 >
-                  <Undo2 className="size-4" strokeWidth={1.75} />
+                  <Undo2 className="size-3.5" strokeWidth={1.75} />
                 </button>
                 <button
                   onClick={() => makeUp(r.prayer)}
                   disabled={r.owed === 0}
-                  className="press inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[0.8125rem] font-semibold ring-1 ring-line transition-opacity ring-inset hover:bg-fill disabled:opacity-40"
+                  aria-label={`Mark one ${PRAYER_META[r.prayer].name} made up`}
+                  className="press inline-flex h-8 items-center gap-1 rounded-full bg-fill px-3 text-[0.75rem] font-semibold transition-colors hover:bg-fill-strong disabled:opacity-40"
                 >
                   <Check className="size-3.5" strokeWidth={2.25} />
                   Made up
@@ -109,7 +122,7 @@ export function QadaPanel({ ledger }: { ledger: Ledger }) {
       )}
 
       <BacklogSheet open={editing} onClose={() => setEditing(false)} />
-    </section>
+    </Card>
   );
 }
 
